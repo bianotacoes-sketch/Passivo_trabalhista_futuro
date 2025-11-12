@@ -1,0 +1,19 @@
+ADICIONAR MAIS UM PARAMETRO DE TIPO DE AVISO , QUE PODE SER i= INDENIZADO E T = TRABALHADO 
+
+
+para os casos de demissão com aviso indenizado a cada ano completo se acrescenta 3 dias no aviso indenizado
+da data de demissão (datapaâmetro)
+
+dias saldo salario projetar dias corridos na data de parâmetro
+
+férias proporcionais , se a diferença ( dtparametro -dtiniciaq ) < 15 , 0 , se não considerar 
+por exemplo 
+
+se o dia da  dtadoparametro +1 , for igual ou maior que o dia da dtinicioaquisitivo então conta o mês , se não, ,
+a diferença - 1 , 
+
+diferença ( dtparametro -dtiniciaq ) >= 15, e a diferença de meses = 0 , então 1 
+
+
+
+CRIAR UM PARÂMETRO DE TIPO DE AVISO SE FOR INDENIZADO ,CONSIDERAR TODAS AS COLUNAS DE API , INDEPENDENTE SE A PESSOA ESTÁ DE AVISO OU NÃO
