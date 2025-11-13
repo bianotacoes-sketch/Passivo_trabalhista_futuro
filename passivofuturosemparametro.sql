@@ -317,7 +317,7 @@ FERIAS_PROPORCIONAIS AS (
         COL.CODEMP,
         COL.CODFUNC,
         col.SALBASE,
-		case when DATEDIFF(day,GETDATE(),col.DTADM) <15 then 0
+		case when DATEDIFF(day,cast(col.DTADM as date),GETDATE()) <15 then 0
          when (day(col.DATA_PARAM)+1 ) >=day(col.DTADM) then
 		((CASE WHEN (CASE WHEN DAY(ISNULL(COL.DTDEM, DR.DATA_REF)) = DAY(EOMONTH(ISNULL(COL.DTDEM, DR.DATA_REF))) THEN 30 ELSE DAY(ISNULL(COL.DTDEM, DR.DATA_REF)) END) >= 15 THEN 1 ELSE 0 END) - 
         (CASE WHEN (CASE WHEN DAY(MAX(DTINIAQUI)) = DAY(EOMONTH(MAX(DTINIAQUI))) THEN 30 ELSE DAY(MAX(DTINIAQUI)) END) >= 15 THEN 1 ELSE 0 END) + 
@@ -524,3 +524,6 @@ left join TFPAVI avi on avi.CODFUNC = b.CODFUNC and avi.CODEMP = b.codemp
 inner join TFPDEP d on d.CODDEP = b.coddep
 inner join TSICUS cc on cc.codcencus = d.codcencus
 CROSS JOIN PARAMETRO p  -- ADICIONE ESTA LINHA
+
+
+
