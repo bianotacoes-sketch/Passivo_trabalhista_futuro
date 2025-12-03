@@ -10,11 +10,13 @@
 
 
 
+
+
 WITH 
 
 PARAMETRO AS (
     SELECT 
-        CONVERT(DATETIME, '31/10/2025', 103) AS DATA_PARAM,
+        CONVERT(DATETIME, '30/11/2025', 103) AS DATA_PARAM,
         'Indenizado' AS TIPO_AVISO_PREVIO  -- Parâmetro adicionado: 'Indenizado' ou 'Trabalhado'
 ),
 
@@ -208,10 +210,23 @@ COLABORADORES AS (
         case when  DAY(DATA_PARAM) = 31 then 30 
 		when MONTH(data_param) =2 and DAY(DATA_PARAM) = 28 then 30 
 		else DAY(DATA_PARAM)
-        end DIAS_SALDO_SALARIO,
+        end DIAS_SALDO_SALARIO, 
         COALESCE(FUN.AD_SALDOFGTS, 0) AS SALDO_ANTERIOR_FGTS,
         COALESCE(HISTFUN.SALBASE, FUN.SALBASE) AS SALBASE,
-        (COALESCE(HISTFUN.SALBASE, FUN.SALBASE) / 30 * (30 + (FLOOR(DATEDIFF(DAY, FUN.DTADM, ISNULL(FUN.DTDEM, DR.DATA_REF)) / 365) * 3))) AS AVISO_PREVIO_INDENIZADO,
+       CASE 
+    WHEN 
+		month(FUN.DTADM)>=month(P.DATA_PARAM) and day(FUN.DTADM)>=day(P.DATA_PARAM) then
+		
+        (30 + (DATEDIFF(YEAR, FUN.DTADM, P.DATA_PARAM) * 3)) * COALESCE(HISTFUN.SALBASE, FUN.SALBASE) / 30
+    ELSE
+        (30 + ((DATEDIFF(YEAR, FUN.DTADM, P.DATA_PARAM) - 1) * 3)) * COALESCE(HISTFUN.SALBASE, FUN.SALBASE) / 30
+END AS AVISO_PREVIO_INDENIZADO,
+		
+		
+		
+		
+		--(COALESCE(HISTFUN.SALBASE, FUN.SALBASE) / 30 * (30 + (FLOOR(DATEDIFF(DAY, FUN.DTADM, ISNULL(FUN.DTDEM, DR.DATA_REF)) / 365) * 3))) AS AVISO_PREVIO_INDENIZADO,
+		
 		case when month(FUN.DTADM)>=month(P.DATA_PARAM) and day(FUN.DTADM)>=day(P.DATA_PARAM) then
 		30 + (datediff(YEAR,FUN.DTADM,P.DATA_PARAM)*3) 
 		when month(FUN.DTADM)<month(P.DATA_PARAM) or day(FUN.DTADM)<day(P.DATA_PARAM) then
@@ -549,7 +564,7 @@ left join TFPAVI avi on avi.CODFUNC = b.CODFUNC and avi.CODEMP = b.codemp
 inner join TFPDEP d on d.CODDEP = b.coddep
 inner join TSICUS cc on cc.codcencus = d.codcencus
 CROSS JOIN PARAMETRO p  -- ADICIONE ESTA LINHA
-where b.CODFUNC = 7443 ),
+where b.CODFUNC = 5452  ),
 base_tres as(
 select *, 
 (SALDO_SALARIO + INSALUBRIDADE + PERICULOSIDADE)*0.08 as FGTS_MES,
@@ -626,7 +641,7 @@ isnull(UM_TERCO_FERIAS_API,0) +
 isnull(MEDIA_FERIAS_API,0) + 
 isnull(FERIAS_PROPORCIONAIS,0) + 
 isnull(UM_TERCO_FERIAS_PROPROCIONAIS,0) + 
-isnull(MEDIA_FERIAS_PROPORCIONAIS,0) + 
+isnull(MEDIA_FERIAS_PROPORCIONAIS,0) +  
 isnull(FERIAS_VENCIDAS,0) + 
 isnull(MEDIA_FERIAS_VENCIDAS,0) + 
 isnull(TERCO_FERIAS_VENCIDAS,0) + 
@@ -640,12 +655,4 @@ from base_tres
 
 
 
-
-
-
-
-
-
-
-
-
+select * from TFPFUN where matricula = 5452
